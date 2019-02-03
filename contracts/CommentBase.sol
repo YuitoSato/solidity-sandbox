@@ -30,25 +30,44 @@ contract CommentBase {
         return results;
     }
 
-    function getComment(uint commentIndex) external view returns (
+    function getComment(uint _commentIndex) external view returns (
         uint, address , uint, address[] memory
     ) {
-        Comment memory comment = comments[commentIndex];
+        Comment memory comment = comments[_commentIndex];
         uint commentHash = comment.commentHash;
-        address ownerAddress = commentIndexToOwner[commentIndex];
+        address ownerAddress = commentIndexToOwner[_commentIndex];
         uint likeCount = comment.likeCount;
         address[] memory likeFroms = comment.likeFroms;
         return (commentHash, ownerAddress, likeCount, likeFroms);
     }
 
-    function likeComment(uint commentIndex) external {
-        Comment storage comment = comments[commentIndex];
+    modifier canLikeOnlyOnce(uint _commentIndex) {
+        Comment memory comment = comments[_commentIndex];
+        address[] memory likeFroms = comment.likeFroms;
+        require(!_containAddress(likeFroms, msg.sender));
+        _;
+    }
+
+    function _containAddress(address[] memory addresses, address targetAddress) internal pure returns (bool){
+        uint i;
+        for (i = 0; i < addresses.length; i ++) {
+            if (addresses[i] == targetAddress) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function likeComment(uint _commentIndex) external canLikeOnlyOnce(_commentIndex) {
+        Comment storage comment = comments[_commentIndex];
+
+
         comment.likeCount ++;
         comment.likeFroms.push(msg.sender);
     }
 
-    function getOwnerByCommentIndex(uint commentIndex) external view returns (address) {
-        return commentIndexToOwner[commentIndex];
+    function getOwnerByCommentIndex(uint _commentIndex) external view returns (address) {
+        return commentIndexToOwner[_commentIndex];
     }
 
 }

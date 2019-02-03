@@ -2,7 +2,7 @@ const CommentBase = artifacts.require('./CommentBase.sol');
 
 function parseComment(commentAbiResult) {
   return {
-    commentHash: commentAbiResult[0].toNumber(),
+    commentHash: commentAbiResult[0].toString(),
     ownerAddress: commentAbiResult[1],
     likeCount: commentAbiResult[2].toNumber(),
     likeFroms: commentAbiResult[3]
@@ -14,13 +14,11 @@ contract('CommentBase', async (accounts) => {
 
   beforeEach(async () => {
     commentBase = await CommentBase.new();
-    // const commentBase = await CommentBase.deployed();
     await commentBase.createComment(1);
   });
 
   describe('getComments', async () => {
     it('should get comments', async () => {
-      // const commentBase = await CommentBase.deployed();
       const comments = await commentBase.getComments();
       assert.equal(comments.length, 1, 'could not get comments');
     });
@@ -28,7 +26,6 @@ contract('CommentBase', async (accounts) => {
 
   describe('commentIndexToOwner', async () => {
     it('should get owner by comment index', async () => {
-      // const commentBase = await CommentBase.deployed();
       const owner = await commentBase.getOwnerByCommentIndex(0);
       assert.equal(owner, accounts[0], 'could not get owner by comment index')
     });
@@ -36,7 +33,6 @@ contract('CommentBase', async (accounts) => {
 
   describe('likeComment', async () => {
     it('should like a comment and increment likeCount', async () => {
-      // const commentBase = await CommentBase.deployed();
       const commentIndex = 0;
       await commentBase.likeComment(commentIndex);
       const result = await commentBase.getComment(commentIndex);
@@ -50,6 +46,20 @@ contract('CommentBase', async (accounts) => {
       const result = await commentBase.getComment(commentIndex);
       const comment = parseComment(result);
       assert.equal(comment.likeFroms[0], accounts[0], 'could not push address to likeFroms');
+    });
+
+    it('sould not like a comment more than twice', async () => {
+      const commentIndex = 0;
+      await commentBase.likeComment(commentIndex);
+
+      try {
+        await commentBase.likeComment(commentIndex);
+      } catch (e) {
+        assert.ok
+        return;
+      }
+
+      throw Error('could like a comment twice');
     });
   });
 

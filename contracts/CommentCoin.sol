@@ -1,14 +1,13 @@
 pragma solidity ^0.5.0;
 
-import 'openzeppelin-solidity/contracts/token/ERC721/ERC721Mintable.sol';
+import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
 
-contract CommentCoin {
+contract CommentCoin is ERC20 {
 
     string public constant name = 'CommentCoin';
 
     string public constant symbol = 'COMME';
 
-    // same as ether. (1ether=1wei * (10 ** 18))
     uint public constant decimals = 18;
 
 }
