@@ -17,7 +17,7 @@ contract('CommentCoin', (accounts) => {
       await commentCoin.approveAndCall(commentBase.address, 100);
       const actual = (await commentCoin.balanceOf(commentBase.address)).toNumber();
       const expected = 100;
-      assert.equal(actual, expected, 'could not approve and call.');
+      expect(actual).to.equal(expected);
     });
   });
 });

@@ -61,7 +61,7 @@ contract CommentBase is Ownable {
     modifier canLikeOnlyOnce(uint _commentIndex) {
         Comment memory comment = comments[_commentIndex];
         address[] memory likeFroms = comment.likeFroms;
-        require(!_containAddress(likeFroms, msg.sender));
+        require(!_containAddress(likeFroms, msg.sender), 'error.canLikeOnlyOnce');
         _;
     }
 
